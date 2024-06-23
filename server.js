@@ -38,18 +38,15 @@ app.post('/:formType', (req, res) => {
     const { formType } = req.params;
     const { itemName } = req.body;
 
-    // Create a new item instance and save it to the database
     const newItem = new Item({ formType, itemName });
     newItem.save()
-        .then(item => {
-            console.log('Item saved:', item); // Debugging output
-            res.json(item);
-        })
+        .then(item => res.json(item))
         .catch(err => {
-            console.error('Error saving item:', err); // More detailed error logging
-            res.status(500).send("Error saving item to database: " + err.message);
+            console.error('Error saving item:', err); // Log the full error
+            res.status(500).send("Error saving item to database: " + err.stack); // Send back the error stack
         });
 });
+
 
 // Start the server
 app.listen(port, () => {
