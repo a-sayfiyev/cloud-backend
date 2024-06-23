@@ -1,4 +1,4 @@
-require('dotenv').config(); // This line loads environment variables from .env file
+require('dotenv').config(); // Load environment variables from .env file
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
@@ -11,11 +11,9 @@ const port = process.env.PORT || 3000;
 mongoose.connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true
-}).then(() => {
-    console.log('Connected to MongoDB');
-}).catch(err => {
-    console.error('Could not connect to MongoDB:', err.message);
-});
+})
+.then(() => console.log('Connected to MongoDB'))
+.catch(err => console.error('Could not connect to MongoDB:', err.message));
 
 // Define a schema for each form
 const ItemSchema = new mongoose.Schema({
@@ -38,14 +36,18 @@ app.post('/:formType', (req, res) => {
     const { formType } = req.params;
     const { itemName } = req.body;
 
+    console.log('Received:', formType, itemName); // Debugging output
+
     // Create a new item instance and save it to the database
     const newItem = new Item({ formType, itemName });
     newItem.save()
         .then(item => {
+            console.log('Item saved:', item); // Debugging output
             res.json(item);
         })
         .catch(err => {
-            res.status(500).send("Error saving item to database.");
+            console.error('Error saving item:', err); // More detailed error logging
+            res.status(500).send("Error saving item to database: " + err.message);
         });
 });
 
