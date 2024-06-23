@@ -7,10 +7,12 @@ const cors = require('cors');
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Connect to MongoDB using environment variable
+// Connect to MongoDB using environment variable with updated timeout settings
 mongoose.connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
+    connectTimeoutMS: 30000, // Set connect timeout to 30 seconds
+    socketTimeoutMS: 45000  // Set socket timeout to 45 seconds
 })
 .then(() => console.log('Connected to MongoDB'))
 .catch(err => console.error('Could not connect to MongoDB:', err.message));
@@ -35,8 +37,6 @@ app.use(cors({
 app.post('/:formType', (req, res) => {
     const { formType } = req.params;
     const { itemName } = req.body;
-
-    console.log('Received:', formType, itemName); // Debugging output
 
     // Create a new item instance and save it to the database
     const newItem = new Item({ formType, itemName });
